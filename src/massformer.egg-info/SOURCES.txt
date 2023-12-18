@@ -1,0 +1,10 @@
+setup.cfg
+setup.py
+src/massformer/__init__.py
+src/massformer/algos1.c
+src/massformer/algos2.c
+src/massformer/utils.py
+src/massformer.egg-info/PKG-INFO
+src/massformer.egg-info/SOURCES.txt
+src/massformer.egg-info/dependency_links.txt
+src/massformer.egg-info/top_level.txt

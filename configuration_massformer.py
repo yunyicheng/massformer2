@@ -142,10 +142,11 @@ class MassFormerConfig(PretrainedConfig):
         num_out_degree: int = 512,
         num_spatial: int = 512,
         num_edge_dis: int = 128,
-        multi_hop_max_dist: int = 5,  # sometimes is 20
+        # TODO: difference bertween multi_hop_max_dist and spatial_pos_max
+        multi_hop_max_dist: int = 1024,  # sometimes is 20
         spatial_pos_max: int = 1024,
         edge_type: str = "multi_hop",
-        max_nodes: int = 512,
+        max_nodes: int = 128,
         share_input_output_embed: bool = False,
         num_hidden_layers: int = 12,
         embedding_dim: int = 768,
@@ -155,9 +156,10 @@ class MassFormerConfig(PretrainedConfig):
         attention_dropout: float = 0.1,
         activation_dropout: float = 0.1,
         layerdrop: float = 0.0,
-        encoder_normalize_before: bool = False,
+        encoder_normalize_before: bool = True,
         pre_layernorm: bool = False,
-        apply_massformer_init: bool = False,
+        apply_massformer_init: bool = True,
+        apply_graphormer_init: bool = True,
         activation_fn: str = "gelu",
         embed_scale: float = None,
         freeze_embeddings: bool = False,
@@ -196,7 +198,7 @@ class MassFormerConfig(PretrainedConfig):
         self.layerdrop = layerdrop
         self.encoder_normalize_before = encoder_normalize_before
         self.pre_layernorm = pre_layernorm
-        self.apply_massformer_init = apply_massformer_init
+        self.apply_graphormer_init = apply_graphormer_init  # Fix: Replace "apply_graphormer_init" with "apply_massformer_init"
         self.activation_fn = activation_fn
         self.embed_scale = embed_scale
         self.freeze_embeddings = freeze_embeddings

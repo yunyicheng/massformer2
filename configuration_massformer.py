@@ -188,6 +188,7 @@ class MassFormerConfig(PretrainedConfig):
         self.spatial_pos_max = spatial_pos_max
         self.max_nodes = max_nodes
         self.num_hidden_layers = num_hidden_layers
+        # TODO: difference bertween embedding_dim and hidden_size
         self.embedding_dim = embedding_dim
         self.hidden_size = embedding_dim
         self.ffn_embedding_dim = ffn_embedding_dim

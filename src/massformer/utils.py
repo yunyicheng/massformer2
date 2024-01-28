@@ -6,6 +6,7 @@ import torch as th
 import torch.nn.functional as F
 from rdkit import Chem
 from torch_geometric.data import Data
+from contextlib import contextmanager
 
 EPS = np.finfo(np.float32).eps
 CHARGE_FACTOR_MAP = {
@@ -303,6 +304,7 @@ def np_one_hot(input, num_classes=None):
     return oh
 
 
+@contextmanager
 def np_temp_seed(seed):
     state = np.random.get_state()
     np.random.seed(seed)

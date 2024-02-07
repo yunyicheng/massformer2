@@ -14,7 +14,6 @@
 # limitations under the License.
 """ MassFormer model configuration"""
 
-import transformers
 
 from transformers import PretrainedConfig
 from transformers import logging
@@ -142,7 +141,6 @@ class MassFormerConfig(PretrainedConfig):
         num_out_degree: int = 512,
         num_spatial: int = 512,
         num_edge_dis: int = 128,
-        # TODO: difference bertween multi_hop_max_dist and spatial_pos_max
         multi_hop_max_dist: int = 1024,  # sometimes is 20
         spatial_pos_max: int = 1024,
         edge_type: str = "multi_hop",

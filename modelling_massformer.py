@@ -999,7 +999,6 @@ class NeimsBlock(nn.Module):
 
 class MLPModule(nn.Module):
 
-    # TODO: fill in the rest of the arguments
     def __init__(self, g_dim, m_dim, o_dim, ff_h_dim, embed_linear, embed_agg, ff_layer_type, dropout, bidirectional_prediction, output_activation, output_normalization, ff_num_layers, gate_prediction, ff_skip):
 
         super(MLPModule, self).__init__()
@@ -1153,12 +1152,12 @@ class MLPModule(nn.Module):
 
 class MassFormerModel(nn.Module):
 
-    def __init__(self, graphormer_config):
+    def __init__(self, massformer_config):
         super(MassFormerModel, self).__init__()
-        self.graphormer_module = GraphormerModel(config=graphormer_config)
+        self.graphormer_module = GraphormerModel(config=massformer_config)
         self.mlp_module = MLPModule(
             g_dim=768,
-            m_dim=10,  # Adjust the dimension to match tensor a
+            m_dim=10,
             o_dim=1000,
             ff_h_dim=1000,
             embed_linear=False,

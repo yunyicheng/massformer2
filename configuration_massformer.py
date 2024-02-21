@@ -157,7 +157,6 @@ class MassFormerConfig(PretrainedConfig):
         encoder_normalize_before: bool = True,
         pre_layernorm: bool = False,
         apply_massformer_init: bool = True,
-        apply_graphormer_init: bool = True,
         activation_fn: str = "gelu",
         embed_scale: float = None,
         freeze_embeddings: bool = False,
@@ -186,7 +185,6 @@ class MassFormerConfig(PretrainedConfig):
         self.spatial_pos_max = spatial_pos_max
         self.max_nodes = max_nodes
         self.num_hidden_layers = num_hidden_layers
-        # TODO: difference bertween embedding_dim and hidden_size
         self.embedding_dim = embedding_dim
         self.hidden_size = embedding_dim
         self.ffn_embedding_dim = ffn_embedding_dim
@@ -197,7 +195,7 @@ class MassFormerConfig(PretrainedConfig):
         self.layerdrop = layerdrop
         self.encoder_normalize_before = encoder_normalize_before
         self.pre_layernorm = pre_layernorm
-        self.apply_graphormer_init = apply_graphormer_init  # Fix: Replace "apply_graphormer_init" with "apply_massformer_init"
+        self.apply_massformer_init = apply_massformer_init
         self.activation_fn = activation_fn
         self.embed_scale = embed_scale
         self.freeze_embeddings = freeze_embeddings

@@ -156,7 +156,7 @@ class MassFormerConfig(PretrainedConfig):
         layerdrop: float = 0.0,
         encoder_normalize_before: bool = True,
         pre_layernorm: bool = False,
-        apply_massformer_init: bool = True,
+        apply_graphormer_init: bool = True,
         activation_fn: str = "gelu",
         embed_scale: float = None,
         freeze_embeddings: bool = False,
@@ -195,7 +195,7 @@ class MassFormerConfig(PretrainedConfig):
         self.layerdrop = layerdrop
         self.encoder_normalize_before = encoder_normalize_before
         self.pre_layernorm = pre_layernorm
-        self.apply_massformer_init = apply_massformer_init
+        self.apply_graphormer_init = apply_graphormer_init
         self.activation_fn = activation_fn
         self.embed_scale = embed_scale
         self.freeze_embeddings = freeze_embeddings

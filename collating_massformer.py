@@ -10,11 +10,11 @@ import torch.nn as nn
 import numpy as np
 import pandas as pd
 import torch.utils.data as th_data
-import src.massformer.utils as utils
 
 # from ...utils import is_cython_available, requires_backends
-from transformers import is_cython_available, requires_backends
-from transformers import GraphormerDataCollator
+from massformer2 import utils
+from transformers.utils import is_cython_available, requires_backends
+from transformers.models.graphormer.collating_graphormer import GraphormerDataCollator
 from typing import Any, Dict, List, Mapping
 from tqdm import tqdm
 
@@ -22,7 +22,7 @@ if is_cython_available():
     import pyximport
 
     pyximport.install(setup_args={"include_dirs": np.get_include()})
-    from . import algos_massformer  # noqa E402
+    from massformer2 import algos2 as algos_massformer  # noqa E402
 
 
 def convert_to_single_emb(x, offset: int = 512):
@@ -32,7 +32,7 @@ def convert_to_single_emb(x, offset: int = 512):
     return x
 
 
-def preprocess_item(item, spec_feats, keep_features=True):
+def preprocess_item(item, keep_features=True):
     requires_backends(preprocess_item, ["cython"])
 
     if keep_features and "edge_attr" in item.keys():  # edge_attr
@@ -78,12 +78,8 @@ def preprocess_item(item, spec_feats, keep_features=True):
 
 
 class MassFormerDataCollator(GraphormerDataCollator):
-    def __init__(self, spatial_pos_max, on_the_fly_processing=False):
-        if not is_cython_available():
-            raise ImportError("MassFormer preprocessing needs Cython (pyximport)")
-        
+    def __init__(self, spatial_pos_max=1024):
         super().__init__(spatial_pos_max=spatial_pos_max, on_the_fly_processing=False)
-        # custom init stuff for MassFormer
 
 
     def __call__(self, items: List[dict]):
@@ -111,6 +107,7 @@ class MassFormerDataCollator(GraphormerDataCollator):
         # custom call stuff for MassFormer
         gf_collated = super().__call__(gf_items)
         print(f"gf_collated_keys = {list(gf_collated.keys())}")
+        
 
         # After collating gf aspects, remove gf-related keys for mass spec collation
         for item in items:
@@ -142,10 +139,10 @@ class MassFormerDataCollator(GraphormerDataCollator):
         return both_collated
 
 
-# class TrainSubset(th_data.Subset):
+class TrainSubset(th_data.Subset):
 
-#     def __getitem__(self, idx):
-#         return self.dataset.__getitem__(self.indices[idx])
+    def __getitem__(self, idx):
+        return self.dataset.__getitem__(self.indices[idx])
     
 class MassFormerBaseDataset(th_data.Dataset):
 

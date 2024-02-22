@@ -514,3 +514,21 @@ def unprocess_spec(spec, transform):
     spec = th.clamp(spec, min=0.)
     assert not th.isnan(spec).any()
     return spec
+
+
+#-----------------------------loss utils-----------------------------
+def kl(p, q): return th.sum(p * (th.log(p + EPS) - th.log(q + EPS)), dim=1)
+
+def compute_weights(x, mz_bin_res):
+
+    mass_pow = 0.5  # 1.0
+    weights = (
+        mz_bin_res *
+        th.arange(
+            1,
+            x.shape[1] +
+            1,
+            device=x.device,
+            dtype=th.float32))**mass_pow
+    weights = (weights / th.sum(weights)).unsqueeze(0)
+    return weights

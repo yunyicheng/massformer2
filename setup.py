@@ -4,7 +4,7 @@ import numpy as np
 
 setup(
     ext_modules=cythonize(
-        "src/massformer/*.pyx",
+        "src/massformer2/*.pyx",
         compiler_directives={'language_level': "3"}
     ),
     include_dirs=[np.get_include()]

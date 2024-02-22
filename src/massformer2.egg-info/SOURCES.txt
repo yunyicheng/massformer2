@@ -1,0 +1,12 @@
+LICENSE
+README.md
+setup.cfg
+setup.py
+src/massformer2/__init__.py
+src/massformer2/algos1.c
+src/massformer2/algos2.c
+src/massformer2/utils.py
+src/massformer2.egg-info/PKG-INFO
+src/massformer2.egg-info/SOURCES.txt
+src/massformer2.egg-info/dependency_links.txt
+src/massformer2.egg-info/top_level.txt

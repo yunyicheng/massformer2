@@ -34,7 +34,7 @@ from transformers.activations import ACT2FN
 from transformers.modeling_outputs import BaseModelOutputWithNoAttention, SequenceClassifierOutput
 from transformers.modeling_utils import PreTrainedModel
 from transformers.utils import logging
-from .configuration_massformer import MassFormerConfig
+from configuration_massformer import MassFormerConfig
 
 
 logger = logging.get_logger(__name__)

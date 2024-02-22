@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from configuration_massformer import MassFormerConfig
 from collating_massformer import MassFormerBaseDataset, MassFormerDataCollator
 from modelling_massformer import MassFormerModel
-from src.massformer.utils import *
+from massformer2 import utils
 
 
 def get_config():  

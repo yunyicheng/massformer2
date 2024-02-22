@@ -1,0 +1,9 @@
+LICENSE
+README.md
+setup.py
+UNKNOWN.egg-info/PKG-INFO
+UNKNOWN.egg-info/SOURCES.txt
+UNKNOWN.egg-info/dependency_links.txt
+UNKNOWN.egg-info/top_level.txt
+src/massformer2/algos1.c
+src/massformer2/algos2.c

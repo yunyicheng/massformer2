@@ -1039,8 +1039,8 @@ class MLPModule(nn.Module):
             self.embed_agg_fn = lambda x: sum(x)
             self.embed_dim = self.g_embed_dim
         elif self.embed_agg == "avg":
-            print(f"self.g_embed_dim: {self.g_embed_dim}")
-            print(f"self.m_embed_dim: {self.m_embed_dim}")
+            # print(f"self.g_embed_dim: {self.g_embed_dim}")
+            # print(f"self.m_embed_dim: {self.m_embed_dim}")
             assert self.g_embed_dim == self.m_embed_dim
             self.embed_agg_fn = lambda x: sum(x) / len(x)
             self.embed_dim = self.g_embed_dim
@@ -1174,7 +1174,7 @@ class MassFormerModel(nn.Module):
 
 
     def get_graph_data(self, graph_entry):
-        print(f"graph_entry keys = {list(graph_entry.keys())}")
+        # print(f"graph_entry keys = {list(graph_entry.keys())}")
 
         # this list of arguments is basically what preprocess_item produces
         gf_keys = ['input_nodes', 'attn_bias', 'attn_edge_type', 'spatial_pos', 'in_degree', 'out_degree', 'input_edges', 'labels']
@@ -1193,14 +1193,14 @@ class MassFormerModel(nn.Module):
                 print(f"Warning: {k} not found in item")
 
         # After the loop, print all shapes
-        print(f"---------------- Shape of gf_items ----------------")
-        for k, shape in shapes.items():
-            print(f"Shape of {k}: {shape}")    
+        # print(f"---------------- Shape of gf_items ----------------")
+        # for k, shape in shapes.items():
+        #     print(f"Shape of {k}: {shape}")    
         return gf_item
         
 
     def get_spec_data(self, spec_entry):
-        print(f"spec_entry keys = {list(spec_entry.keys())}")
+        # print(f"spec_entry keys = {list(spec_entry.keys())}")
         # remove gf-related keys
         gf_related_keys = ['spatial_pos', 'labels', 'y', 'edge_index', 'edge_attr', 
                            'num_nodes', 'attn_bias', 'input_nodes', 'attn_edge_type', 
@@ -1222,9 +1222,9 @@ class MassFormerModel(nn.Module):
                         shapes[k] = spec_item[k].shape  # Store the shape for later
 
         # After the loop, print all shapes
-        print(f"---------------- Shape of spec_item ----------------")
-        for k, shape in shapes.items():
-            print(f"Shape of {k}: {shape}")    
+        # print(f"---------------- Shape of spec_item ----------------")
+        # for k, shape in shapes.items():
+        #     print(f"Shape of {k}: {shape}")    
         return spec_item
         
 
@@ -1236,6 +1236,6 @@ class MassFormerModel(nn.Module):
         graph_embedding = graph_embedding.last_hidden_state[:, 0, :] # extract the embedding of the super node
         data_dict = {"graph_embed": graph_embedding, **spec_data}
         output = self.mlp_module(data_dict)
-        print(output['pred'].shape)
-        print(output["pred"])
+        # print(output['pred'].shape)
+        # print(output["pred"])
         return output

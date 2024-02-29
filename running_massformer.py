@@ -19,7 +19,7 @@ from massformer2 import utils
 
 def get_config():  
     mf_config = MassFormerConfig()
-    print(mf_config.__dict__)
+    # print(mf_config.__dict__)
     return mf_config
 
 
@@ -32,18 +32,18 @@ def get_dataset():
     return demo_dataset
 
 def get_model(mf_config):
-    mf_model = MassFormerModel(config=mf_config)
-    print(f"MassFormerModel: {mf_model.__dict__}")
+    mf_model = MassFormerModel(massformer_config=mf_config)
+    # print(f"MassFormerModel: {mf_model.__dict__}")
     return mf_model
 
 
 def get_loss_func(loss_type, mz_bin_res, agg=None):
     # set up loss function
     if loss_type == "mse":
-        loss_func = mse
+        loss_func = utils.mse
     elif loss_type == "wmse":
         def w_mse(pred, targ):
-            weights = compute_weights(pred, mz_bin_res)
+            weights = utils.compute_weights(pred, mz_bin_res)
             return th.sum(weights * (pred - targ)**2, dim=1)
         loss_func = w_mse
     elif loss_type == "js":
@@ -52,21 +52,21 @@ def get_loss_func(loss_type, mz_bin_res, agg=None):
             targ = F.normalize(targ, dim=1, p=1)
             z = 0.5 * (pred + targ)
             # relu is to prevent NaN from small negative values
-            return th.sqrt(F.relu(0.5 * kl(pred, z) + 0.5 * kl(targ, z)))
+            return th.sqrt(F.relu(0.5 * utils.kl(pred, z) + 0.5 * utils.kl(targ, z)))
         loss_func = js
     elif loss_type == "forw_kl":
         # p=targ, q=pred
         def forw_kl(pred, targ):
             pred = F.normalize(pred, dim=1, p=1)
             targ = F.normalize(targ, dim=1, p=1)
-            return kl(targ, pred)
+            return utils.kl(targ, pred)
         loss_func = forw_kl
     elif loss_type == "rev_kl":
         # p=pred, q=targ
         def rev_kl(pred, targ):
             pred = F.normalize(pred, dim=1, p=1)
             targ = F.normalize(targ, dim=1, p=1)
-            return kl(pred, targ)
+            return utils.kl(pred, targ)
         loss_func = rev_kl
     elif loss_type == "normal_nll":
         # TBD change this back
@@ -96,7 +96,7 @@ def get_loss_func(loss_type, mz_bin_res, agg=None):
         loss_func = cos
     elif loss_type == "wcos":
         def w_cos(pred, targ):
-            weights = compute_weights(pred, mz_bin_res)
+            weights = utils.compute_weights(pred, mz_bin_res)
             w_pred = F.normalize(weights * pred, dim=1, p=2).unsqueeze(1)
             w_targ = F.normalize(weights * targ, dim=1, p=2).unsqueeze(2)
             return 1. - th.matmul(w_pred, w_targ).squeeze(-1).squeeze(-1)
@@ -127,6 +127,7 @@ def run_train_epoch(model, train_loader, optimizer, device):
         # Get loss
         loss_func = get_loss_func(loss_type="wcos", mz_bin_res=1)
         loss = loss_func(normalized_preds, normalized_labels)
+        loss = loss.mean()
         loss.backward()
         optimizer.step()
         total_train_loss += loss.item()
@@ -145,6 +146,7 @@ def run_val(model, val_loader, device):
             outputs = model(batch_data)
             loss_func = get_loss_func(loss_type="wcos", mz_bin_res=1)
             loss = loss_func(outputs['pred'], batch_data['spec'].float())
+            loss = loss.mean()
             total_val_loss += loss.item()
             progress_bar.set_postfix({'Eval Loss': f'{loss.item():.4f}'})
         # Store the average validation loss
@@ -162,6 +164,7 @@ def run_test(model, test_loader, device):
             outputs = model(batch_data)
             loss_func = get_loss_func(loss_type="wcos", mz_bin_res=1)
             loss = loss_func(outputs['pred'], batch_data['spec'].float())
+            loss = loss.mean()
             total_test_loss += loss.item()
             progress_bar.set_postfix({'Eval Loss': f'{loss.item():.4f}'})
         # Store the average validation loss
@@ -183,9 +186,9 @@ def train_and_eval(model, train_loader, val_loader, optimizer, device, num_epoch
         # Training phase
         avg_losss = run_train_epoch(model=model, train_loader=train_loader, optimizer=optimizer, device=device)
         train_losses.append(avg_losss)
-        val_loader = list(val_loader)
 
         # Validation
+        val_loader = list(val_loader)
         avg_val_loss = run_val(model=model, val_loader=val_loader, device=device)
         val_losses.append(avg_val_loss)
 
@@ -218,15 +221,15 @@ def main():
 
     # Get dataloaders using the method provided by the BaseDataset class
     run_d = {
-    "val_frac": 0.0,
-    "test_frac": 0.2,
+    "val_frac": 0.2,
+    "test_frac": 0.1,
     "sec_frac": 1.00,
     "split_key": "scaffold",
     "split_seed": 42,
     "batch_size": 2,
     "grad_acc_interval": 1,
     "num_workers": 0,
-    "optimizer": "adam",
+    "optimizer": "adamw",
     "pin_memory": True,
     "device": "cuda" if th.cuda.is_available() else "cpu",
     }
@@ -236,14 +239,16 @@ def main():
     train_loader = dl_dict['train']
     val_loader = dl_dict['primary']['val']
     # Define the model, land optimizer
-    mf_config = MassFormerConfig()
-    mf_model = MassFormerModel(mf_config)
+    mf_config = get_config()
+    mf_model = get_model(mf_config)
+
     if run_d["optimizer"] == "adam":
-        optimizer = th.optim.Adam
+        optimizer = th.optim.Adam(mf_model.parameters(), lr=1e-4)
     elif run_d["optimizer"] == "adamw":
-        optimizer = th.optim.AdamW
+        optimizer = th.optim.AdamW(mf_model.parameters(), lr=1e-4)
     else:
         raise NotImplementedError
+
 
     # If using a GPU
     device = th.device("cuda" if th.cuda.is_available() else "cpu")

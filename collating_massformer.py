@@ -73,6 +73,8 @@ def preprocess_item(item, keep_features=True):
     item["in_degree"] = np.sum(adj, axis=1).reshape(-1) + 1  # we shift all indices by one for padding
     item["out_degree"] = item["in_degree"]  # for undirected graph
     item["input_edges"] = input_edges + 1  # we shift all indices by one for padding
+    if "labels" not in item:
+        item["labels"] = item["y"]
 
     return item
 
@@ -84,7 +86,7 @@ class MassFormerDataCollator(GraphormerDataCollator):
 
     def __call__(self, items: List[dict]):
 
-        print(f"all keys = {list(items[0].keys())}")
+        # print(f"all keys = {list(items[0].keys())}")
 
         # this list of arguments is basically what preprocess_item produces
         gf_keys = ['input_nodes', 'attn_bias', 'attn_edge_type', 'spatial_pos', 'in_degree', 'out_degree', 'input_edges', 'labels']
@@ -106,7 +108,7 @@ class MassFormerDataCollator(GraphormerDataCollator):
 
         # custom call stuff for MassFormer
         gf_collated = super().__call__(gf_items)
-        print(f"gf_collated_keys = {list(gf_collated.keys())}")
+        # print(f"gf_collated_keys = {list(gf_collated.keys())}")
         
 
         # After collating gf aspects, remove gf-related keys for mass spec collation
@@ -131,7 +133,7 @@ class MassFormerDataCollator(GraphormerDataCollator):
             else:
                 raise ValueError(f"{type(items[0][k])} is not supported")
 
-        print(f"other_collated_keys = {list(other_collated.keys())}")
+        # print(f"other_collated_keys = {list(other_collated.keys())}")
 
         # now, let's combine the two collated dicts
         both_collated = {**gf_collated, **other_collated}

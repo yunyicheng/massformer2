@@ -518,6 +518,7 @@ def unprocess_spec(spec, transform):
 
 #-----------------------------loss utils-----------------------------
 def kl(p, q): return th.sum(p * (th.log(p + EPS) - th.log(q + EPS)), dim=1)
+def mse(x, y): return 0.5 * th.mean((x - y)**2, dim=1)
 
 def compute_weights(x, mz_bin_res):
 
